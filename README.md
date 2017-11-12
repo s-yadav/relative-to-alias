@@ -36,6 +36,7 @@ Options:
 
 ### Example
 Consider this folder directory
+```
 |-- src
 |   |-- util
 |   |   |-- common.js
@@ -45,7 +46,7 @@ Consider this folder directory
 |   |   |-- body.js
 |   |   |-- util
 |   |   |   |-- common.js
-
+```
 
 
 -- index.js
