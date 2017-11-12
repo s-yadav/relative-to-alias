@@ -1,9 +1,8 @@
 A tiny cli tool (codemod) to replace relative paths to given alias in your project. It does the opposite of [aliasify](https://github.com/benbria/aliasify), [module-alias](https://github.com/ilearnio/module-alias), or more specifically it works in conjunction to those modules. It makes sure that in your source code all relative paths (for which you have defined alias using those modules) should be replaced to alias.
 
 #### When do you need this?
-- On later point of time you decided to create a alias for a path. But in your project you have already used relative path in src files for that path. With this cli tool you can update those relative paths in src files to alias more reliably
+You have defined alias on your webpack or babelrc and you want to refactor your code to start using those alias instead of relative paths.
 
-- If any one used relative path instead of defined alias, you want to refactors them to alias
 
 ### Install
 ```
@@ -13,7 +12,7 @@ npm install -g relative-to-alias
 ### Usage
 On your project root directory
 ```
-node start.js --src ./src --alias utils --alias-path ./src/util
+relative-to-alias --src ./src --alias utils --alias-path ./src/util
 ```
 Note: alias-path is relative to root-path argument. while src path is relative to the current directory.
 
@@ -33,6 +32,75 @@ Options:
                                     for the alias path directory.
                                                       [boolean] [default: false]
   --help                            Show help                          [boolean]
+```
+
+### Example
+Consider this folder directory
+|-- src
+|   |-- util
+|   |   |-- common.js
+|   |-- index.js
+|   |-- component
+|   |   |-- header.js
+|   |   |-- body.js
+|   |   |-- util
+|   |   |   |-- common.js
+
+
+
+-- index.js
+```js
+import {debounce} from './util/common';
+/***
+ Other code
+***/
+```
+
+-- header.js
+```js
+import {debounce} from '../util/common';
+import {hideScrollbar} from './util/common'; //This will not be changed as its not on alias path
+
+/***
+ Other code
+***/
+```
+
+
+-- body.js
+```js
+const {debounce} = require('../util/common');
+/***
+ Other code
+***/
+```
+
+#### After compile
+-- index.js
+```js
+import {debounce} from 'utils/common';
+/***
+ Other code
+***/
+```
+
+-- header.js
+```js
+import {debounce} from 'utils/common';
+import {hideScrollbar} from './util/common'; //This will not be changed as its not on alias path
+
+/***
+ Other code
+***/
+```
+
+
+-- body.js
+```js
+const {debounce} = require('utils/common');
+/***
+ Other code
+***/
 ```
 
 ### Like this

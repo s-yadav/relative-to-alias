@@ -48,7 +48,6 @@ yargs
 const {rootPath, src, alias, aliasPath, extensions, leaveAliasPathDirectory} = yargs.argv;
 
 const aliasRelativeToRoot = path.relative(rootPath, aliasPath);
-const srcRelativeToRoot = path.relative(rootPath, src);
 
 const srcStat = fs.lstatSync(src);
 
