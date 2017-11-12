@@ -59,7 +59,7 @@ import {debounce} from './util/common';
 -- header.js
 ```js
 import {debounce} from '../util/common';
-import {hideScrollbar} from './util/common'; //This will not be changed as its not on alias path
+import {hideScrollbar} from './util/common'; //This will not change as its not on alias path
 
 /***
  Other code
@@ -87,7 +87,7 @@ import {debounce} from 'utils/common';
 -- header.js
 ```js
 import {debounce} from 'utils/common';
-import {hideScrollbar} from './util/common'; //This will not be changed as its not on alias path
+import {hideScrollbar} from './util/common'; //This will not change as its not on alias path
 
 /***
  Other code
