@@ -1,4 +1,6 @@
+#!/usr/bin/env node
 //@flow
+
 import yargs from 'yargs';
 import fs from 'fs';
 import path from 'path';
