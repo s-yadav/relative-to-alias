@@ -1,6 +1,6 @@
 {
   "name": "relative-to-alias",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A tiny cli tool to convert relative path to specified alias.",
   "main": "lib/index.js",
   "bin": "lib/index.js",
