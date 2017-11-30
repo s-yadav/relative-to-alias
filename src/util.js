@@ -71,6 +71,10 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
         const aliasedPath = absolutePathFromRoot.replace(aliasRelativeToRoot, alias);
         sourceNode.value = aliasedPath;
 
+        //remove leading and trailing comments from the node
+        node.leadingComments = undefined;
+        node.trailingComments = undefined;
+
         const {start, end} = node;
         const currentImportCode = code.substring(start, end);
         const updatedImport = generate(node, {quotes: preferredQuotes}, currentImportCode).code;
