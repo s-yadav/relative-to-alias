@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 //@flow
-
 import yargs from 'yargs';
-import fs from 'fs';
 import path from 'path';
 import glob from 'glob';
 
-import {transformPath} from './util';
+import {transformPath, getSourceGlob, excludeAliasPathFiles} from './util';
 
 //define options
 yargs
@@ -37,30 +35,23 @@ yargs
     type: 'string',
     default: 'js,jsx'
   })
-  .option('leave-alias-path-directory', {
-    alias: 'l',
-    describe: 'If true it will not replace path to alias for the alias path directory.',
+  .option('include-alias-path-directory', {
+    alias: 'i',
+    describe: 'If true it will replace path to alias for the alias path directory.',
     type: 'boolean',
     default: false
   })
   .required(['src', 'alias', 'alias-path']);
 
-  yargs.help();
+yargs.help();
 
-const {rootPath, src, alias, aliasPath, extensions, leaveAliasPathDirectory} = yargs.argv;
+
+const {rootPath, src, alias, aliasPath, extensions, includeAliasPathDirectory} = yargs.argv;
 
 const aliasRelativeToRoot = path.relative(rootPath, aliasPath);
 
-const srcStat = fs.lstatSync(src);
+const srcGlob = getSourceGlob(src, extensions);
 
-let srcGlob;
-
-if (srcStat.isDirectory()) {
-  const srcWithEndingSlash = src.lastIndexOf('/') === src.length - 1 ? src : `${src}/`;
-  srcGlob = `${srcWithEndingSlash}**/*.{${extensions}}`;
-} else if (srcStat.isFile()) {
-  srcGlob = src;
-}
 
 glob(srcGlob, {}, (er, files) =>  {
   //changes files to relative to root path
@@ -68,11 +59,9 @@ glob(srcGlob, {}, (er, files) =>  {
     return path.relative(rootPath, file);
   });
 
-  //exclude files inside the alias path directory if option is defined
-  if (leaveAliasPathDirectory) {
-    files = files.filter((file) => {
-      return file.indexOf(aliasRelativeToRoot) !== 0;
-    })
+  //exclude files inside the alias path directory based on includeAliasPathDirectory flag
+  if (!includeAliasPathDirectory) {
+    files = excludeAliasPathFiles(files, aliasRelativeToRoot);
   }
 
   files.forEach((file) => {

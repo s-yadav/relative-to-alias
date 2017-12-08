@@ -33,11 +33,45 @@ const babylonPlugins = [
  'nullishCoalescingOperator'
 ];
 
-//@flow
+
 function isNodeModule(path: string) {
   return path[0] !== '.';
 }
 
+
+/**
+ * Convert src path to glob path
+ */
+function getSourceGlob(src: string, extensions: string) {
+  const srcStat = fs.lstatSync(src);
+
+  let srcGlob;
+
+  if (srcStat.isDirectory()) {
+    const srcWithEndingSlash = src.lastIndexOf('/') === src.length - 1 ? src : `${src}/`;
+    srcGlob = `${srcWithEndingSlash}**/*.{${extensions}}`;
+  } else if (srcStat.isFile()) {
+    srcGlob = src;
+  }
+
+  return srcGlob;
+}
+
+
+/**
+ * Exlude files from the alias path folder as by
+ * default they should not be transformed
+ */
+function excludeAliasPathFiles(files:Array<string>, aliasPath: string) {
+  return files.filter((file) => {
+    return file.indexOf(aliasPath) !== 0;
+  })
+}
+
+/**
+ * Replace imports in code string to specified alias. This does the string replace
+ * of specific import line so that other part of code is not affected by this mod
+ */
 function replaceImports (code: string, imports: Array<Object>) {
   let newCode = '';
   let startIdx = 0;
@@ -50,6 +84,10 @@ function replaceImports (code: string, imports: Array<Object>) {
   return newCode;
 }
 
+
+/**
+ * Extract the import lines from the file which matches the alias
+ */
 function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
 
   const ast = parse(code, {
@@ -65,6 +103,7 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
     const relativePath = sourceNode.value;
     const rawSource = sourceNode.raw || (sourceNode.extra && sourceNode.extra.raw);
     const preferredQuotes = (rawSource || '')[0] === "'" ? 'single' : 'double';
+
     if (!isNodeModule(relativePath)) {
       const absolutePathFromRoot = path.join(pathDirname(filePath), relativePath);
       if (absolutePathFromRoot.indexOf(aliasRelativeToRoot) !== -1) {
@@ -109,7 +148,17 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
 }
 
 
-export function transformPath(file: string, aliasInfo: aliasInfo) {
+
+function getTransformedCode(filePath: string, code: string, aliasInfo: aliasInfo) {
+    const imports = getImports(filePath, code, aliasInfo);
+
+    return imports.length ? replaceImports(code, imports) : null;
+}
+
+
+
+
+function transformPath(file: string, aliasInfo: aliasInfo) {
   return new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, code) => {
       if (err) {
@@ -118,12 +167,9 @@ export function transformPath(file: string, aliasInfo: aliasInfo) {
         return;
       }
 
-      const imports = getImports(file, code, aliasInfo);
+      const newCode = getTransformedCode(file, code, aliasInfo);
 
-      if (imports.length) {
-
-        const newCode = replaceImports(code, imports);
-
+      if (newCode) {
         fs.writeFile(file, newCode, (err) => {
           if(err) {
             console.error(err);
@@ -140,3 +186,5 @@ export function transformPath(file: string, aliasInfo: aliasInfo) {
     });
   })
 }
+
+export {getTransformedCode, transformPath, getSourceGlob, excludeAliasPathFiles};
