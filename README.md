@@ -1,17 +1,16 @@
 ![Travis build status](https://travis-ci.org/s-yadav/relative-to-alias.svg?branch=master)
 
-A tiny cli tool (codemod) to replace relative paths to given alias in your project. It does the opposite of [aliasify](https://github.com/benbria/aliasify), [module-alias](https://github.com/ilearnio/module-alias), or more specifically it works in conjunction to those modules. It makes sure that in your source code all relative paths (for which you have defined alias using those modules) should be replaced to alias.
+A tiny cli tool (codemod) to replace relative paths to defined alias in your project.
 
-#### When do you need this?
-You have defined alias on your webpack or babelrc and you want to refactor your code to start using those alias instead of relative paths.
+You can use anything to define alias for your files/directory ([Aliasing modules](#aliasing-modules)) and then use this module to refactor your code to start using those alias instead of relative paths.
 
 
-### Install
+## Install
 ```
 npm install -g relative-to-alias
 ```
 
-### Usage
+## Usage
 On your project root directory
 ```
 relative-to-alias --src ./src --alias utils --alias-path ./src/util
@@ -36,7 +35,7 @@ Options:
 --help                              Show help                        [boolean]
 ```
 
-### Example
+## Example
 Consider this folder directory
 ```
 |-- src
@@ -106,8 +105,15 @@ const {debounce} = require('utils/common');
 ***/
 ```
 
-### Like this
+## Aliasing modules
+You can use one of the following to define alias for your files/directory in your application.
+- [webpack](https://webpack.js.org/configuration/resolve/#resolve-alias) Webpack have inbuilt way to define alias for files/directory.
+- [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver) If you want to define alias as babel transformer.
+- [module-alias](https://github.com/ilearnio/module-alias) Define alias in your package.json
+- [aliasify](https://github.com/benbria/aliasify) Rewrite require calls in browserify modules.
+
+## Like this
 [:star: this repo](https://github.com/s-yadav/relative-to-alias)
 
-### Notes
+## Notes
 - This is a codemod which will replace your source files, so make sure to either backup or commit uncommitted changes before running this tool.
