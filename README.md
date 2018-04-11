@@ -29,7 +29,7 @@ Options:
                                     alias                  [string] [required]
 --extensions, -e                    File extensions which has to be parsed.
                                                   [string] [default: "js,jsx"]
---include-alias-path-directory, -l  If true it will replace path to alias for
+--include-alias-path-directory, -i  If true it will replace path to alias for
                                     the alias path directory.
                                                     [boolean] [default: false]
 --help                              Show help                        [boolean]
