@@ -108,4 +108,16 @@ describe('Test transformation', () => {
 
     test(code, expected);
   });
+
+  it('should not affect require js pattern as that', () => {
+    const code  = `
+      require(['../../utils/ajax'], (ajax) => {
+        ajax();
+      });
+    `;
+
+    const expected  = null; //null means there is no changes
+
+    test(code, expected);
+  })
 });

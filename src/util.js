@@ -104,7 +104,7 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
     const rawSource = sourceNode.raw || (sourceNode.extra && sourceNode.extra.raw);
     const preferredQuotes = (rawSource || '')[0] === "'" ? 'single' : 'double';
 
-    if (!isNodeModule(relativePath)) {
+    if (relativePath && !isNodeModule(relativePath)) {
       const absolutePathFromRoot = path.join(pathDirname(filePath), relativePath);
       if (absolutePathFromRoot.indexOf(aliasRelativeToRoot) !== -1) {
         const aliasedPath = absolutePathFromRoot.replace(aliasRelativeToRoot, alias);
@@ -151,7 +151,6 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
 
 function getTransformedCode(filePath: string, code: string, aliasInfo: aliasInfo) {
     const imports = getImports(filePath, code, aliasInfo);
-
     return imports.length ? replaceImports(code, imports) : null;
 }
 
