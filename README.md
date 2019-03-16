@@ -19,20 +19,22 @@ Note: alias-path is relative to root-path argument. while src path is relative t
 
 ```
 Options:
---root-path, -r                     Root path of your project folder. Your
-                                    imports / requires will be resolved based
-                                    on this           [string] [default: "./"]
---src, -s                           Source folder or file in which you want to
-                                    run the script         [string] [required]
---alias, -a                         Alias for a given path [string] [required]
---alias-path, --ap                  Path which you want to be replaced with
-                                    alias                  [string] [required]
---extensions, -e                    File extensions which has to be parsed.
-                                                  [string] [default: "js,jsx"]
---include-alias-path-directory, -i  If true it will replace path to alias for
-                                    the alias path directory.
-                                                    [boolean] [default: false]
---help                              Show help                        [boolean]
+  --root-path, -r                     Root path of your project folder. Your
+                                      imports / requires will be resolved based
+                                      on this           [string] [default: "./"]
+  --src, -s                           Source folder or file in which you want to
+                                      run the script         [string] [required]
+  --alias, -a                         Alias for a given path [string] [required]
+  --alias-path, --ap                  Path which you want to be replaced with
+                                      alias                  [string] [required]
+  --extensions, -e                    File extensions which has to be parsed.
+                                                    [string] [default: "js,jsx"]
+  --include-alias-path-directory, -i  If true it will replace path to alias for
+                                      the alias path directory.
+                                                      [boolean] [default: false]
+  --ignore                            Exclude given glob paths for the parsing.
+                                     [array] [default: ["./**/node_modules/**"]]
+  --help                              Show help                        [boolean]
 ```
 
 ## Example
@@ -104,6 +106,13 @@ const {debounce} = require('utils/common');
  Other code
 ***/
 ```
+
+### Ignoring folders
+By default node_modules are excluded from parsing, you may want to override ignore option. You can pass multiple glob patterns space separated.
+```
+relative-to-alias --src ./src --alias utils --alias-path ./src/util --ignore node_modules/**/* test/**/*
+```
+Note: If you are passing ignore option, you might have to define node_modules pattern again (only if the node_module folder is inside the provided src) as the option overrides the default value. 
 
 ## Aliasing modules
 You can use one of the following to define alias for your files/directory in your application.

@@ -42,7 +42,7 @@ function isNodeModule(path: string) {
 /**
  * Convert src path to glob path
  */
-function getSourceGlob(src: string, extensions: string) {
+export function getSourceGlob(src: string, extensions: string) {
   const srcStat = fs.lstatSync(src);
 
   let srcGlob;
@@ -57,12 +57,25 @@ function getSourceGlob(src: string, extensions: string) {
   return srcGlob;
 }
 
+/** 
+ * Fix exclude patterns based on source for https://github.com/isaacs/node-glob/issues/309, 
+*/
+export function getIgnoreGlobs(srcGlob: string, ignorePatterns: Array<string> ) {
+  const addDot = srcGlob.startsWith('./');
+  return ignorePatterns.map((pattern) => {
+    if (addDot && !pattern.startsWith('./')) {
+      return `./${pattern}`;
+    }
+
+    return pattern;
+  })
+}
 
 /**
  * Exlude files from the alias path folder as by
  * default they should not be transformed
  */
-function excludeAliasPathFiles(files:Array<string>, aliasPath: string) {
+export function excludeAliasPathFiles(files:Array<string>, aliasPath: string) {
   return files.filter((file) => {
     return file.indexOf(aliasPath) !== 0;
   })
@@ -149,15 +162,14 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
 
 
 
-function getTransformedCode(filePath: string, code: string, aliasInfo: aliasInfo) {
-    const imports = getImports(filePath, code, aliasInfo);
-    return imports.length ? replaceImports(code, imports) : null;
+export function getTransformedCode(filePath: string, code: string, aliasInfo: aliasInfo) {
+  const imports = getImports(filePath, code, aliasInfo);
+  return imports.length ? replaceImports(code, imports) : null;
 }
 
 
 
-
-function transformPath(file: string, aliasInfo: aliasInfo) {
+export function transformPath(file: string, aliasInfo: aliasInfo) {
   return new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, code) => {
       if (err) {
@@ -185,5 +197,3 @@ function transformPath(file: string, aliasInfo: aliasInfo) {
     });
   })
 }
-
-export {getTransformedCode, transformPath, getSourceGlob, excludeAliasPathFiles};

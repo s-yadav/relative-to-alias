@@ -1,4 +1,4 @@
-import {getSourceGlob, excludeAliasPathFiles} from '../src/util';
+import {getSourceGlob, excludeAliasPathFiles, getIgnoreGlobs} from '../src/util';
 import { expect } from 'chai';
 
 describe('Test getSourceGlob', () => {
@@ -28,5 +28,19 @@ describe('Test excludeAliasPathFiles', () => {
       'src/actions/actions.js'
     ]);
   });
+});
 
+describe('Test getIgnoreGlobs', () => {
+  it('adds ./ before the ignore pattern if the source glob pattern start with ./', () => {
+    const ignoreGlobs = ['node_modules/**/*', '.git/**/*'];
+
+    expect(getIgnoreGlobs('/src', ignoreGlobs)).to.deep.equal(['node_modules/**/*', '.git/**/*']);
+
+    expect(getIgnoreGlobs('./', ignoreGlobs)).to.deep.equal(['./node_modules/**/*', './.git/**/*']);
+  });
+
+  it('does not add an extra ./ before the ignore pattern if it already starts with ./', () => {
+    const ignoreGlobs = ['./node_modules/**/*', './.git/**/*'];
+    expect(getIgnoreGlobs('./', ignoreGlobs)).to.deep.equal(['./node_modules/**/*', './.git/**/*']);
+  })
 });

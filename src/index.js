@@ -4,7 +4,7 @@ import yargs from 'yargs';
 import path from 'path';
 import glob from 'glob';
 
-import {transformPath, getSourceGlob, excludeAliasPathFiles} from './util';
+import {transformPath, getSourceGlob, excludeAliasPathFiles, getIgnoreGlobs} from './util';
 
 //define options
 yargs
@@ -41,19 +41,24 @@ yargs
     type: 'boolean',
     default: false
   })
+  .option('ignore', {
+    describe: 'Exclude given glob paths for the parsing.',
+    type: 'array',
+    default: ['./**/node_modules/**'],
+  })
   .required(['src', 'alias', 'alias-path']);
 
 yargs.help();
 
 
-const {rootPath, src, alias, aliasPath, extensions, includeAliasPathDirectory} = yargs.argv;
+const {rootPath, src, alias, aliasPath, extensions, includeAliasPathDirectory, ignore} = yargs.argv;
 
 const aliasRelativeToRoot = path.relative(rootPath, aliasPath);
 
 const srcGlob = getSourceGlob(src, extensions);
 
 
-glob(srcGlob, {}, (er, files) =>  {
+glob(srcGlob, { ignore: getIgnoreGlobs(srcGlob, ignore) }, (err, files) =>  {
   //changes files to relative to root path
   files = files.map((file) => {
     return path.relative(rootPath, file);
