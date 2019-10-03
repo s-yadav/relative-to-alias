@@ -6,11 +6,10 @@ import pathDirname from 'path-dirname';
 import {traverse} from '@babel/core';
 import generate from '@babel/generator';
 
-type aliasInfo = {alias: string, aliasRelativeToRoot: string};
+type aliasOptions = {alias: string, aliasRelativeToRoot: string, language: string};
 
 const babylonPlugins = [
  'jsx',
- 'flow',
  'doExpressions',
  'objectRestSpread',
  'decorators-legacy',
@@ -100,14 +99,15 @@ function replaceImports (code: string, imports: Array<Object>) {
 /**
  * Extract the import lines from the file which matches the alias
  */
-function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
+function getImports(filePath: string, code: string, aliasOptions: aliasOptions) {
+
+  const {alias, aliasRelativeToRoot, language} = aliasOptions;
 
   const ast = parse(code, {
     sourceType: 'module',
-    plugins: babylonPlugins
+    plugins: [language, ...babylonPlugins]
   });
 
-  const {alias, aliasRelativeToRoot} = aliasInfo;
 
   const imports = [];
 
@@ -161,14 +161,14 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
 
 
 
-export function getTransformedCode(filePath: string, code: string, aliasInfo: aliasInfo) {
-  const imports = getImports(filePath, code, aliasInfo);
+export function getTransformedCode(filePath: string, code: string, aliasOptions: aliasOptions) {
+  const imports = getImports(filePath, code, aliasOptions);
   return imports.length ? replaceImports(code, imports) : null;
 }
 
 
 
-export function transformPath(file: string, aliasInfo: aliasInfo) {
+export function transformPath(file: string, aliasOptions: aliasOptions) {
   return new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, code) => {
       if (err) {
@@ -177,7 +177,7 @@ export function transformPath(file: string, aliasInfo: aliasInfo) {
         return;
       }
 
-      const newCode = getTransformedCode(file, code, aliasInfo);
+      const newCode = getTransformedCode(file, code, aliasOptions);
 
       if (newCode) {
         fs.writeFile(file, newCode, (err) => {

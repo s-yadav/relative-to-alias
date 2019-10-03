@@ -35,6 +35,12 @@ yargs
     type: 'string',
     default: 'js,jsx'
   })
+  .option('language', {
+    alias: 'l',
+    describe: 'Typed language the project is in (flow/typescript).',
+    type: 'string',
+    default: 'flow',
+  })
   .option('include-alias-path-directory', {
     alias: 'i',
     describe: 'If true it will replace path to alias for the alias path directory.',
@@ -51,7 +57,7 @@ yargs
 yargs.help();
 
 
-const {rootPath, src, alias, aliasPath, extensions, includeAliasPathDirectory, ignore} = yargs.argv;
+const {rootPath, src, alias, aliasPath, extensions, includeAliasPathDirectory, ignore, language} = yargs.argv;
 
 const aliasRelativeToRoot = path.relative(rootPath, aliasPath);
 
@@ -72,7 +78,8 @@ glob(srcGlob, { ignore: getIgnoreGlobs(srcGlob, ignore) }, (err, files) =>  {
   files.forEach((file) => {
     transformPath(file, {
       alias,
-      aliasRelativeToRoot
+      aliasRelativeToRoot,
+      language
     });
   });
 });
