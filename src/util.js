@@ -1,20 +1,19 @@
 //@flow
-import {parse} from 'babylon';
+import {parse} from '@babel/parser';
 import path from 'path';
 import fs from 'fs';
 import pathDirname from 'path-dirname';
-import {traverse} from 'babel-core';
-import generate from 'babel-generator';
+import {traverse} from '@babel/core';
+import generate from '@babel/generator';
 
 type aliasInfo = {alias: string, aliasRelativeToRoot: string};
 
 const babylonPlugins = [
  'jsx',
  'flow',
- 'typescript',
  'doExpressions',
  'objectRestSpread',
- 'decorators',
+ 'decorators-legacy',
  'classProperties',
  'classPrivateProperties',
  'classPrivateMethods',
@@ -29,7 +28,7 @@ const babylonPlugins = [
  'bigInt',
  'optionalCatchBinding',
  'throwExpressions',
- 'pipelineOperator',
+ ['pipelineOperator', { "proposal": "minimal" }],
  'nullishCoalescingOperator'
 ];
 
@@ -57,8 +56,8 @@ export function getSourceGlob(src: string, extensions: string) {
   return srcGlob;
 }
 
-/** 
- * Fix exclude patterns based on source for https://github.com/isaacs/node-glob/issues/309, 
+/**
+ * Fix exclude patterns based on source for https://github.com/isaacs/node-glob/issues/309,
 */
 export function getIgnoreGlobs(srcGlob: string, ignorePatterns: Array<string> ) {
   const addDot = srcGlob.startsWith('./');
@@ -129,7 +128,7 @@ function getImports(filePath: string, code: string, aliasInfo: aliasInfo) {
 
         const {start, end} = node;
         const currentImportCode = code.substring(start, end);
-        const updatedImport = generate(node, {quotes: preferredQuotes}, currentImportCode).code;
+        const updatedImport = generate(node, {jsescOption :{quotes: preferredQuotes}}, currentImportCode).code;
 
         imports.push({
           start,
