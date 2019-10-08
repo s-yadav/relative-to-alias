@@ -8,6 +8,9 @@ import generate from '@babel/generator';
 
 type aliasOptions = {alias: string, aliasRelativeToRoot: string, language: string};
 
+/**
+ * Source: https://babeljs.io/docs/en/babel-parser
+ */
 const babylonPlugins = [
  'jsx',
  'doExpressions',
@@ -28,7 +31,11 @@ const babylonPlugins = [
  'optionalCatchBinding',
  'throwExpressions',
  ['pipelineOperator', { "proposal": "minimal" }],
- 'nullishCoalescingOperator'
+ 'nullishCoalescingOperator',
+ 'exportDefaultFrom',
+ 'exportNamespaceFrom',
+ 'logicalAssignment',
+ 'partialApplication'
 ];
 
 
@@ -118,7 +125,7 @@ function getImports(filePath: string, code: string, aliasOptions: aliasOptions) 
 
     if (relativePath && !isNodeModule(relativePath)) {
       const absolutePathFromRoot = path.join(pathDirname(filePath), relativePath);
-      if (absolutePathFromRoot.indexOf(aliasRelativeToRoot) !== -1) {
+      if (absolutePathFromRoot.indexOf(aliasRelativeToRoot) === 0) {
         const aliasedPath = absolutePathFromRoot.replace(aliasRelativeToRoot, alias);
         sourceNode.value = aliasedPath;
 

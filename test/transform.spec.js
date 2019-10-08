@@ -2,14 +2,14 @@ import {getTransformedCode} from '../src/util';
 import { expect } from 'chai';
 
 describe('Test transformation', () => {
-  const aliasInfo = {
+  const  defaultAliasInfo = {
     alias: 'utils',
     aliasRelativeToRoot: 'src/utils'
   }
 
-  const filePath = './src/component/modal/modal.js';
+  const defaultFilePath = './src/component/modal/modal.js';
 
-  function test(code, expected) {
+  function test(code, expected, filePath = defaultFilePath, aliasInfo = defaultAliasInfo) {
     const newCode = getTransformedCode(filePath, code, aliasInfo);
 
     expect(newCode).to.equal(expected);
@@ -109,7 +109,7 @@ describe('Test transformation', () => {
     test(code, expected);
   });
 
-  it('should not affect require js pattern as that', () => {
+  it('should not affect require js pattern as that might need the actual path', () => {
     const code  = `
       require(['../../utils/ajax'], (ajax) => {
         ajax();
@@ -119,5 +119,26 @@ describe('Test transformation', () => {
     const expected  = null; //null means there is no changes
 
     test(code, expected);
-  })
+  });
+
+  it('should not effect paths outside of alias', () => {
+    const  aliasInfo = {
+      alias: '~/utils',
+      aliasRelativeToRoot: 'utils'
+    }
+
+    const filePath = './component/modal/modal.js';
+
+    const code  = `
+      import someUtil from '../utils/file';
+      import anotherUtil from '../../utils/anotherFile';
+    `;
+
+    const expected = `
+      import someUtil from '../utils/file';
+      import anotherUtil from '~/utils/anotherFile';
+    `;
+
+    test(code, expected, filePath, aliasInfo);
+  });
 });
