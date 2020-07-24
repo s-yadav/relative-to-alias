@@ -19,22 +19,34 @@ Note: alias-path is relative to root-path argument. while src path is relative t
 
 ```
 Options:
-  --root-path, -r                     Root path of your project folder. Your
-                                      imports / requires will be resolved based
-                                      on this           [string] [default: "./"]
-  --src, -s                           Source folder or file in which you want to
-                                      run the script         [string] [required]
-  --alias, -a                         Alias for a given path [string] [required]
-  --alias-path, --ap                  Path which you want to be replaced with
-                                      alias                  [string] [required]
-  --extensions, -e                    File extensions which has to be parsed.
-                                                    [string] [default: "js,jsx"]
-  --include-alias-path-directory, -i  If true it will replace path to alias for
-                                      the alias path directory.
-                                                      [boolean] [default: false]
-  --ignore                            Exclude given glob paths for the parsing.
-                                     [array] [default: ["./**/node_modules/**"]]
-  --help                              Show help                        [boolean]
+  --version                           Show version number  [boolean]
+  --root-path, -r                     Root path of your project
+                                      folder. Your imports /
+                                      requires will be resolved
+                                      based on this
+                                            [string] [default: "./"]
+  --src, -s                           Source folder or file in which
+                                      you want to run the script
+                                                 [string] [required]
+  --alias, -a                         Alias for a given path
+                                                 [string] [required]
+  --alias-path, --ap                  Path which you want to be
+                                      replaced with alias
+                                                 [string] [required]
+  --extensions, -e                    File extensions which has to
+                                      be parsed.
+                                        [string] [default: "js,jsx"]
+  --language, -l                      Typed language the project is
+                                      in (flow/typescript).
+                                          [string] [default: "flow"]
+  --include-alias-path-directory, -i  If true it will replace path
+                                      to alias for the alias path
+                                      directory.
+                                          [boolean] [default: false]
+  --ignore                            Exclude given glob paths for
+                                      the parsing.
+                         [array] [default: ["./**/node_modules/**"]]
+  --help                              Show help            [boolean]
 ```
 
 ## Example
