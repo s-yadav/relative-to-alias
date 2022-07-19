@@ -132,6 +132,7 @@ You can use one of the following to define alias for your files/directory in you
 - [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver) If you want to define alias as babel transformer.
 - [module-alias](https://github.com/ilearnio/module-alias) Define alias in your package.json
 - [aliasify](https://github.com/benbria/aliasify) Rewrite require calls in browserify modules.
+- [esm-module-alias)(https://github.com/euberdeveloper/esm-module-alias)
 
 ## Like this
 [:star: this repo](https://github.com/s-yadav/relative-to-alias)
