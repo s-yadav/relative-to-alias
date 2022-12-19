@@ -141,4 +141,21 @@ describe('Test transformation', () => {
 
     test(code, expected, filePath, aliasInfo);
   });
+
+  it('should alias root directories', () => {
+    const  aliasInfo = {
+      alias: '',
+      aliasRelativeToRoot: 'src'
+    }
+
+    const code  = `
+      import common from '../../utils/common';
+    `;
+
+    const expected = `
+      import common from 'utils/common';
+    `;
+
+    test(code, expected, defaultFilePath, aliasInfo);
+  });
 });

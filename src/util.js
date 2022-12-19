@@ -126,7 +126,11 @@ function getImports(filePath: string, code: string, aliasOptions: aliasOptions) 
     if (relativePath && !isNodeModule(relativePath)) {
       const absolutePathFromRoot = path.join(pathDirname(filePath), relativePath);
       if (absolutePathFromRoot.indexOf(aliasRelativeToRoot) === 0) {
-        const aliasedPath = absolutePathFromRoot.replace(aliasRelativeToRoot, alias);
+        let aliasedPath = absolutePathFromRoot.replace(aliasRelativeToRoot, alias);
+        if (alias === '' && aliasedPath.startsWith('/')) {
+          aliasedPath = aliasedPath.slice(1);
+        }
+
         sourceNode.value = aliasedPath;
 
         //remove leading and trailing comments from the node
